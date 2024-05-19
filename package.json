@@ -1,0 +1,20 @@
+{
+  "name": "uWebsocket-benchmarking",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "client.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "Filipe Laborde fil@rezox.com",
+  "license": "ISC",
+  "description": "Some server and client configurations to test uWebsocket.js vs Socket-IO vs raw Websockets.",
+  "dependencies": {
+    "express": "^4.19.2",
+    "inquirer": "^9.2.21",
+    "socket.io": "^4.7.5",
+    "socket.io-client": "^4.7.5",
+    "ws": "^8.17.0"
+  }
+}

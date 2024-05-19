@@ -1,0 +1,10 @@
+*.log
+*.swp
+*.lic
+**/.DS_Store
+**/node_modules/*
+package-lock.json
+test/*
+.logs
+.env
+.git
