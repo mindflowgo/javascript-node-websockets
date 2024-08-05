@@ -15,6 +15,7 @@
     "inquirer": "^9.2.21",
     "socket.io": "^4.7.5",
     "socket.io-client": "^4.7.5",
+    "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.43.0",
     "ws": "^8.17.0"
   }
 }

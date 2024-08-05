@@ -1,9 +1,17 @@
 import io from 'socket.io-client';
 
+const isBrowser = !( typeof process !== 'undefined' && process && process.versions && process.versions.node )
+
 export function clientSocket( bind, socketOpen, socketMessage, socketError, socketClose ){
 	// return new Promise( (resolve)=>{
 	// if namespace, server must be io.of('/same-namespace').connect(....)
-	const socket = io(`http://${bind.hostname}:${bind.port}/${bind.namespace}`, { query: bind.token.replace('token,','token=') } );
+	let protocol = 'http:';
+	let host = bind.hostname + ( bind.port ? ':' + bind.port : '' )
+	if ( isBrowser ){
+		protocol = location.protocol
+		host =( bind.hostname ? bind.hostname + ( bind.port ? ':' + bind.port : '' ) : location.origin.split('://')[1] )
+	}
+	const socket = io(`${protocol}//${host}/${bind.namespace}`, { query: bind.token.replace('token,','token=') } );
 	// const socket = io(`http://${bind.hostname}:${bind.port}/${bind.url}`, { query: 'TOKEN' }); //${bind.namespace}
 	// let socket = new WebSocket(`ws://${bind.hostname}:${bind.port}/${bind.url}`, bind.token.split(',') );
 

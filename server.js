@@ -1,7 +1,9 @@
 /* Websocket Stress Tester (Server Side)
- * Run with: npm install && node server.js
+ * 1. Run with: npm install && npm install uNetworking/uWebSockets.js#v20.43.0
  *
- * Run client afterwards: node client.js
+ * 2. Now run server, from a terminal: node server.js
+ * 
+ * 3. Now run client to stress-test server: node client.js || or load index.html from browser
  * 
  * Based on benchmark idea by Alex Hultman; built by Filipe Laborde / fil@rezox.com
  * MIT License - do as you wish, take responsibility and ownership.
@@ -49,7 +51,7 @@ let clientsCount = 0;
 let socketStats = { opens: 0, closes: 0, errors: 0, dataDrops: 0, msgCnt: 0 }
 let last = Date.now();
 let cpuStats = { cpuTicks: 0, idleTicks: 0, processUsage: 0, now: 0 }
-function showStats(){
+function showStats(fetch=false){
 	function getCurrentTime() {
 		const now = new Date();
 		const hours = String(now.getHours()).padStart(2, '0');
@@ -75,14 +77,15 @@ function showStats(){
 				memory += ` ${key}(${mem}MB)`;
 		}
 		cpuStats = { cpuTicks, idleTicks, processCpuUsage, now }
-		return `${os.cpus()[0].model}:${memory}, processCPU(${processCPU}%), idleCPU(${idleCPU}%)`
+		return [`${os.cpus()[0].model}:${memory}, processCPU(${processCPU}%), idleCPU(${idleCPU}%)`, {processCPU,idleCPU} ]
 	}
 
 	const secondsPassed = ((Date.now() - last)/1000);
 	const transactionsPerSecond = Math.round(transactions/secondsPassed);
 	const messagesPerSecond = Math.round(socketStats.msgCnt/secondsPassed);
+	const [cpuInfoText, cpuInfoData] = getCPU();
 	console.log(`\n--------`);
-	console.log(`${getCurrentTime()}: [${getCPU()}]`);
+	console.log(`${getCurrentTime()}: [${cpuInfoText}]`);
 	console.log("--------");
 	if( socketStats.dataDrops>0 || transactions>0 ){
 		const channelKeys = Object.keys(channels);
@@ -98,7 +101,12 @@ function showStats(){
 		socketStats = { opens: 0, closes: 0, errors: 0, dataDrops: 0, msgCnt: 0 }
 		last = Date.now();
 	}
-	setTimeout( ()=>showStats(), 5000);
+	if( fetch ){
+		const channelData = channelKeys.map( channel=> { return {value: channels[channel].value.toFixed(2), subs: channels[channel].subs.length, volume: channels[channel].volume }} )
+		return { clientsCount, socketStats, serverModule, messagesPerSecond, transactions, transactionsPerSecond, cpuInfoData, channelData }
+	} else {
+		setTimeout( ()=>showStats(), 5000);
+	}
 };
 
 // OUR FUNCTIONS ---------------------------------------------------------------------------
@@ -146,6 +154,9 @@ function socketMessage( id, data, publish, reply, subscribe, unsubscribe, sockIn
 		subscribe(channel);
 		socketStats.msgCnt++; // the message it will send				
 		return;
+	}
+	if( action==='server_stats' ){
+		return showStats(true);
 	}
 
 	if( action==='buy')

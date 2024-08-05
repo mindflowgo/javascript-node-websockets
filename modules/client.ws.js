@@ -1,12 +1,19 @@
 import WebSocket from 'ws';
 
 let retryCnt = 0;
+const isBrowser = !( typeof process !== 'undefined' && process && process.versions && process.versions.node )
 
 export function clientSocket( bind, socketOpen, socketMessage, socketError, socketClose ){
 	// return new Promise( (resolve)=>{
 		let socket = null, socketId = null;
 		function socketInit(){
-			socket = new WebSocket(`ws://${bind.hostname}:${bind.port}/${bind.namespace}`, bind.token.split(',') );
+			let protocol = 'ws:';
+			let host = bind.hostname + ( bind.port ? ':' + bind.port : '' )
+			if ( isBrowser ){
+				protocol = location.protocol.replace(/^http/, 'ws')
+				host =( bind.hostname ? bind.hostname + ( bind.port ? ':' + bind.port : '' ) : location.origin.split('://')[1] )
+			}
+			socket = new WebSocket(`${protocol}//${host}/${bind.namespace}`, bind.token.split(',') );
 
 			socket.on('message', (data) => {
 				const send = (message) => socket.send(JSON.stringify(message));

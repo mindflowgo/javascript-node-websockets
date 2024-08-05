@@ -1,5 +1,5 @@
 import express from "express";
-import { createServer, request } from "http";
+import { createServer } from "http";
 // import { createServer } from "https";
 import { WebSocketServer } from 'ws';
 
@@ -12,7 +12,7 @@ export function serverEngine({ bind, socketAuthenticate, socketOpen, socketClose
 
     // certs
     const certs = {
-        cert: bind.cert, // fs.readFileSync("/etc/letsencrypt/-blah-/fullchain.pem"),
+        cert: bind.cert, 
         key: bind.key, // fs.readFileSync("/etc/letsencrypt/-blah-/privkey.pem")
     }
 

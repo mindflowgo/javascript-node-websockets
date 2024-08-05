@@ -12,6 +12,7 @@ import inquirer from 'inquirer';
 // import { clientSocket } from "./modules/client.io.js";
 
 let clientSocket;
+const isBrowser = !( typeof process !== 'undefined' && process && process.versions && process.versions.node )
 
 // choose stress test level
 let stressLevel = 'medium'
@@ -147,9 +148,6 @@ function showStats(){
 		return acc + channelStats[key].subs.length; },0);
 	if( subscriptions>0 ){
 		console.log(`${getCurrentTime()}: clients:${clientsCount} [+${socketStats.opens},-${socketStats.closes}] (${messagesPerSecond} msg/s) (level: ${stressLevel})`);
-		// console.log('   '+Object.keys(shares).map( share=>{
-		// 	return (`${share}: `+shares[share].toFixed(2)).padEnd(20);
-		// }).join('') );
 		Object.keys(channelStats).forEach( channel=>{
 			console.log(channel+':  '+Object.keys(channelStats[channel]).map( stat=>{ return (stat+': '+(stat==='subs' ? channelStats[channel][stat].length : channelStats[channel][stat])+'').padEnd(17) }).join(''));
 		})

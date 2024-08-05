@@ -40,6 +40,9 @@ export function serverEngine({ bind, socketAuthenticate, socketOpen, socketClose
 
 		socket.on("error", (err) => socketError(err?.message));
 
+		// fired before disconnect - see: https://socket.io/docs/v4/server-socket-instance/
+		// socket.on("disconnecting", (reason) => {});
+		
 		socket.on("disconnect", (reason) => socketClose( socket.id, 0, reason ));
 		  
 		socket.on('subscribe', (channel) =>{
